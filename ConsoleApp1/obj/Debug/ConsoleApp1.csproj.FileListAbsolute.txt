@@ -1,0 +1,21 @@
+C:\Users\ch200001\source\repos\MX001\ConsoleApp1\bin\Debug\ConsoleApp1.exe.config
+C:\Users\ch200001\source\repos\MX001\ConsoleApp1\bin\Debug\ConsoleApp1.exe
+C:\Users\ch200001\source\repos\MX001\ConsoleApp1\bin\Debug\ConsoleApp1.pdb
+C:\Users\ch200001\source\repos\MX001\ConsoleApp1\obj\Debug\ConsoleApp1.csproj.AssemblyReference.cache
+C:\Users\ch200001\source\repos\MX001\ConsoleApp1\obj\Debug\ConsoleApp1.csproj.SuggestedBindingRedirects.cache
+C:\Users\ch200001\source\repos\MX001\ConsoleApp1\obj\Debug\ConsoleApp1.csproj.CoreCompileInputs.cache
+C:\Users\ch200001\source\repos\MX001\ConsoleApp1\obj\Debug\ConsoleApp1.exe
+C:\Users\ch200001\source\repos\MX001\ConsoleApp1\obj\Debug\ConsoleApp1.pdb
+C:\Users\ch200001\source\repos\MX001\ConsoleApp1\bin\Debug\MX001.dll
+C:\Users\ch200001\source\repos\MX001\ConsoleApp1\bin\Debug\MX001.pdb
+C:\Users\ch200001\source\repos\MX001\ConsoleApp1\obj\Debug\ConsoleApp1.csproj.CopyComplete
+E:\2. MEVNSW\1_SourceCode\9_IPEVO\Src\VCS001 Src\ConsoleApp1\bin\Debug\ConsoleApp1.exe.config
+E:\2. MEVNSW\1_SourceCode\9_IPEVO\Src\VCS001 Src\ConsoleApp1\bin\Debug\ConsoleApp1.exe
+E:\2. MEVNSW\1_SourceCode\9_IPEVO\Src\VCS001 Src\ConsoleApp1\bin\Debug\ConsoleApp1.pdb
+E:\2. MEVNSW\1_SourceCode\9_IPEVO\Src\VCS001 Src\ConsoleApp1\obj\Debug\ConsoleApp1.csproj.AssemblyReference.cache
+E:\2. MEVNSW\1_SourceCode\9_IPEVO\Src\VCS001 Src\ConsoleApp1\obj\Debug\ConsoleApp1.csproj.CoreCompileInputs.cache
+E:\2. MEVNSW\1_SourceCode\9_IPEVO\Src\VCS001 Src\ConsoleApp1\obj\Debug\ConsoleApp1.csproj.CopyComplete
+E:\2. MEVNSW\1_SourceCode\9_IPEVO\Src\VCS001 Src\ConsoleApp1\obj\Debug\ConsoleApp1.exe
+E:\2. MEVNSW\1_SourceCode\9_IPEVO\Src\VCS001 Src\ConsoleApp1\obj\Debug\ConsoleApp1.pdb
+E:\2. MEVNSW\1_SourceCode\9_IPEVO\Src\VCS001 Src\ConsoleApp1\bin\Debug\VCS001.dll
+E:\2. MEVNSW\1_SourceCode\9_IPEVO\Src\VCS001 Src\ConsoleApp1\bin\Debug\VCS001.pdb

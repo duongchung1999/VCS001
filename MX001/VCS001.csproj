@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{342DA5C3-0F1F-470B-8C22-023B7B990F70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>VCS001</RootNamespace>
+    <AssemblyName>VCS001</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CommandList.cs" />
+    <Compile Include="ImageProcessing.cs" />
+    <Compile Include="MotorControl.cs" />
+    <Compile Include="TestItem\Data.cs" />
+    <Compile Include="IMerryDll.cs" />
+    <Compile Include="VCS001.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestItem\BaseConversion.cs" />
+    <Compile Include="TestItem\Command.cs" />
+    <Compile Include="TestItem\GetHandle.cs" />
+    <Compile Include="TestItem\MessageBoxs.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TestItem\MessageBoxs.designer.cs">
+      <DependentUpon>MessageBoxs.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TestItem\OldButtonTest.cs" />
+    <Compile Include="TestItem\ProgressBars.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TestItem\ProgressBars.designer.cs">
+      <DependentUpon>ProgressBars.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TestItem\TestMethod.cs" />
+    <Compile Include="TestItem\UpdataFirmware.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TestItem\UpdataFirmware.designer.cs">
+      <DependentUpon>UpdataFirmware.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestItem\MessageBoxs.resx">
+      <DependentUpon>MessageBoxs.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestItem\ProgressBars.resx">
+      <DependentUpon>ProgressBars.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestItem\UpdataFirmware.resx">
+      <DependentUpon>UpdataFirmware.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bin\Debug\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(TargetDir)$(ProjectName).dll" "E:\2. MEVNSW\1_SourceCode\8_MerryApplication\MECH\MerryTest 2023.07.15\MerryTest\bin\Debug\TestItem\$(ProjectName)\$(ProjectName).dll"</PostBuildEvent>
+  </PropertyGroup>
+</Project>

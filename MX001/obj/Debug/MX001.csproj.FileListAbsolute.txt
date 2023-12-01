@@ -1,0 +1,10 @@
+C:\Users\ch200001\source\repos\MX001\MX001\obj\Debug\MX001.csproj.AssemblyReference.cache
+C:\Users\ch200001\source\repos\MX001\MX001\obj\Debug\MerryTest.testitem.MessageBoxs.resources
+C:\Users\ch200001\source\repos\MX001\MX001\obj\Debug\MerryTest.testitem.ProgressBars.resources
+C:\Users\ch200001\source\repos\MX001\MX001\obj\Debug\TestItem.UpdataFirmware.resources
+C:\Users\ch200001\source\repos\MX001\MX001\obj\Debug\MX001.csproj.GenerateResource.cache
+C:\Users\ch200001\source\repos\MX001\MX001\obj\Debug\MX001.csproj.CoreCompileInputs.cache
+C:\Users\ch200001\source\repos\MX001\MX001\bin\Debug\MX001.dll
+C:\Users\ch200001\source\repos\MX001\MX001\bin\Debug\MX001.pdb
+C:\Users\ch200001\source\repos\MX001\MX001\obj\Debug\MX001.dll
+C:\Users\ch200001\source\repos\MX001\MX001\obj\Debug\MX001.pdb
