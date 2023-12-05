@@ -7,3 +7,4 @@ E:\2. MEVNSW\1_SourceCode\9_IPEVO\Src\VCS001 Src\MX001\obj\Debug\VCS001.csproj.G
 E:\2. MEVNSW\1_SourceCode\9_IPEVO\Src\VCS001 Src\MX001\obj\Debug\VCS001.csproj.CoreCompileInputs.cache
 E:\2. MEVNSW\1_SourceCode\9_IPEVO\Src\VCS001 Src\MX001\obj\Debug\VCS001.dll
 E:\2. MEVNSW\1_SourceCode\9_IPEVO\Src\VCS001 Src\MX001\obj\Debug\VCS001.pdb
+E:\2. MEVNSW\1_SourceCode\9_IPEVO\Src\VCS001 Src\MX001\obj\Debug\VCS001.csproj.AssemblyReference.cache

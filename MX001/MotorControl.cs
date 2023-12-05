@@ -72,7 +72,7 @@ namespace VCS001
                 port1.Write(byteArray, 0, byteArray.Length);
                 byte[] responseData = { };
                 int num = 0;
-                Thread.Sleep(1000);
+                //Thread.Sleep(1000);
                 //while (num < 10)
                 //{
                 //    responseData = new byte[port1.BytesToRead];
@@ -123,6 +123,7 @@ namespace VCS001
             string dataset = "01 06 11 94 00 00 CD 1A";
             string dataControl = "01 05 00 50 FF 00 8C 2B";
             if (!SendByte(Port_Name, dataset, 1000)) return false.ToString();
+            Thread.Sleep(3000);
             if (!SendByte(Port_Name, dataControl, 1000)) return false.ToString();
             return true.ToString();
         }
@@ -131,6 +132,7 @@ namespace VCS001
             string dataset = "01 06 11 94 01 C2 4D 1B";
             string dataControl = "01 05 00 50 FF 00 8C 2B";
             if (!SendByte(Port_Name, dataset, 1000)) return false.ToString();
+            Thread.Sleep(3000);
             if (!SendByte(Port_Name, dataControl, 1000)) return false.ToString();
             return true.ToString();
         }
@@ -139,6 +141,7 @@ namespace VCS001
             string dataset = "01 06 11 96 03 84 6C 49";
             string dataControl = "01 05 00 51 FF 00 DD EB";
             if (!SendByte(Port_Name, dataset, 1000)) return false.ToString();
+            Thread.Sleep(3000);
             if (!SendByte(Port_Name, dataControl, 1000)) return false.ToString();
             return true.ToString();
         }
@@ -147,6 +150,7 @@ namespace VCS001
             string dataset = "01 06 11 98 05 46 8F BB";
             string dataControl = "01 05 00 52 FF 00 2D EB";
             if (!SendByte(Port_Name, dataset, 1000)) return false.ToString();
+            Thread.Sleep(3000);
             if (!SendByte(Port_Name, dataControl, 1000)) return false.ToString();
             return true.ToString();
         }
@@ -155,6 +159,7 @@ namespace VCS001
             string dataset = "01 06 11 9A 07 08 AF 2F";
             string dataControl = "01 05 00 53 FF 00 7C 2B";
             if (!SendByte(Port_Name, dataset, 1000)) return false.ToString();
+            Thread.Sleep(3000);
             if (!SendByte(Port_Name, dataControl, 1000)) return false.ToString();
             return true.ToString();
         }
@@ -163,6 +168,7 @@ namespace VCS001
             string dataset = "01 06 11 9C 08 CA CB 4F";
             string dataControl = "01 05 00 54 FF 00 CD EA";
             if (!SendByte(Port_Name, dataset, 1000)) return false.ToString();
+            Thread.Sleep(3000);
             if (!SendByte(Port_Name, dataControl, 1000)) return false.ToString();
             return true.ToString();
         }
@@ -171,6 +177,7 @@ namespace VCS001
             string dataset = "01 06 11 9E 0A 8C EA 1D";
             string dataControl = "01 05 00 55 FF 00 9C 2A";
             if (!SendByte(Port_Name, dataset, 1000)) return false.ToString();
+            Thread.Sleep(3000);
             if (!SendByte(Port_Name, dataControl, 1000)) return false.ToString();
             return true.ToString();
         }
@@ -179,6 +186,7 @@ namespace VCS001
             string dataset = "01 06 11 9E 0C 4E 68 2C";
             string dataControl = "01 05 00 55 FF 00 9C 2A";
             if (!SendByte(Port_Name, dataset, 1000)) return false.ToString();
+            Thread.Sleep(3000);
             if (!SendByte(Port_Name, dataControl, 1000)) return false.ToString();
             return true.ToString();
         }

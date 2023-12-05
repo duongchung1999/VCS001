@@ -23,8 +23,12 @@ namespace ConsoleApp1
             dll.StartRun();
             string[] command =
             {
-               //"Cam2_Setup",
-               "Read_SFR12m_Cam0",
+                "Open_Constant_Photograph",
+               "PhotoGraph_P135D_1",
+               //"Read_Stitching_Defect_Test",
+               "CloseCamera",
+
+
             };
             foreach(string cmd in command)
             {

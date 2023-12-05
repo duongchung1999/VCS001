@@ -22,14 +22,21 @@ namespace VCS001
         private string Camera_path = @"CD C:\VCS001\OpenCameraTest";
         private string ComputerZipFile = @"C:\VCS001\CalibrationDowload\CalibrationData.zip";
         private string Calibration_Path = @"\\10.175.5.25\data";
-        private string Image_Check_Path = @"C:\VCS001\POT_image_test\test";
+        //private string Image_Check_Path = @"C:\VCS001\POT_image_test\test";
+        private string Image_Stitching_Path = @"C:\VCS001\POT_image_test\123";
         private string POT_Image_path = @"CD C:\VCS001\POT_image_test";
+        private string Photograph_Path = @"C:\VCS001\PhotographPath";
+
+        //private string folder_path = $@"C:\VCS001\Image-Log\{DateTime.Now.ToString("yyyy-MM-dd")}";
+        string ImageBackup_path;
+        string ConstantPhotographBackup_path;
         #region 补助指令
         private Process p;
         private string ThreadStr;
+        private string _UseforImgProcess;
         private SerialPort port1;
-        MerryDll MEVN;
-        
+        public Dictionary<string, object> Config = new Dictionary<string, object>();
+
         private string CallCmd(string args, bool returnflag, string returnvalue = "Success", int TimiOut = 30)
         {
             try
@@ -42,19 +49,21 @@ namespace VCS001
                     p.StartInfo.UseShellExecute = false;
                     p.StartInfo.RedirectStandardOutput = true;
                     p.StartInfo.RedirectStandardInput = true;
-                    p.StartInfo.CreateNoWindow = false;//hidden
+                    p.StartInfo.CreateNoWindow = true;//hidden
                     p.StartInfo.RedirectStandardError = true;
                     p.Start();
                     p.StandardInput.WriteLine(@"C:");
                     p.StandardOutput.DiscardBufferedData();
                     Thread ReadThread = new Thread(readCMD);
                     ReadThread.Start();
-                    Thread.Sleep(2000);
+                    Thread.Sleep(200);
                 }
                 ThreadStr = "";
+                _UseforImgProcess = "";
                 bool flag = false;
                 p.StandardInput.WriteLine($"{args}");
                 if (returnflag) return "True";
+                //Thread.Sleep(200);
                 for (int i = 0; i < TimiOut; i++)
                 {
 
@@ -68,9 +77,14 @@ namespace VCS001
                         flag = false;
                         break;
                     }
+                    //string Command_Log_Path = $@"{ImageBackup_path}\CommandLog.txt";
+                    //if (!Directory.Exists(ImageBackup_path)) Directory.CreateDirectory(ImageBackup_path);
+                    //if (!File.Exists(Command_Log_Path)) File.Create(Command_Log_Path);
+                    //string oldContants = File.ReadAllText(Command_Log_Path);
+                    //File.WriteAllText(Command_Log_Path, $"{oldContants}Command: {args}\nRespond{_UseforImgProcess}\n\n");
                     Thread.Sleep(1000);
                 }
-                Thread.Sleep(1000);
+                //Thread.Sleep(1000);
                 return flag ? "True" : $"False";
 
             }
@@ -87,6 +101,7 @@ namespace VCS001
             {
                 string readstr = p.StandardOutput.ReadLine();
                 ThreadStr += readstr;
+                _UseforImgProcess += $"{readstr}\n";
             };
         }
         private string OpenPort(string Com_Name, int Baurate)
@@ -136,8 +151,19 @@ namespace VCS001
         {
             string Resule;
             ThreadStr = "";
+            _UseforImgProcess = "";
             Resule = CallCmd(path, true);
             if (Resule != "True") return path + "False";
+            Resule = CallCmd(args, false, CompareValue, 30);
+            if (Resule != "True") return args + "False";
+            if (ThreadStr.Contains("Not found")) return $"False {ThreadStr}";
+            return ThreadStr;
+        }
+        public string Send_args_in_current_path(string args, string CompareValue)
+        {
+            string Resule;
+            ThreadStr = "";
+            _UseforImgProcess = "";
             Resule = CallCmd(args, false, CompareValue, 30);
             if (Resule != "True") return args + "False";
             if (ThreadStr.Contains("Not found")) return $"False {ThreadStr}";
@@ -716,6 +742,17 @@ namespace VCS001
             if (Value.Contains("False")) return Value;
             return true.ToString();
         }
+        public string AE_40()
+        {
+            string args = $"ast_usb_ctrl.exe s g \"mw 902000a8 40\"";
+            string CompareValue = "total cost";
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            if (Value.Contains("False")) return Value;
+            args = $"ast_usb_ctrl.exe s g \"mw 90200020 8\"";
+            Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            if (Value.Contains("False")) return Value;
+            return true.ToString();
+        }
         public string AE_50()//360 stitching chart
         {
             string args = $"ast_usb_ctrl.exe s g \"mw 902000a8 50\"";
@@ -749,20 +786,37 @@ namespace VCS001
             if (Value.Contains("False")) return Value;
             return true.ToString();
         }
+        public string Get_Image_Log_Path()
+        {
+            try
+            {
+                ImageBackup_path = $@"D:\VCS001-Log\{DateTime.Now.ToString("yyyy-MM-dd")}\{Config["SN"]}_{DateTime.Now.ToString("hh-yy-mm")}";
+            }
+            catch (Exception)
+            {
+                ImageBackup_path = $@"D:\VCS001-Log\{DateTime.Now.ToString("yyyy-MM-dd")}\ConfigNullLog_{DateTime.Now.ToString("hh-yy-mm")}";
+                //throw;
+            }
+            //ImageBackup_path = $@"D:\VCS001-Log\{DateTime.Now.ToString("yyyy-MM-dd")}\{Config["SN"]}_{DateTime.Now.ToString("hh-yy-mm")}";
+           // MessageBox.Show(ImageBackup_path);
+            ConstantPhotographBackup_path = $@"{ImageBackup_path}\Constant_Image";
+            return true.ToString();
+        }
 
         public string Capture(string pictureName)
         {
+            string Image_Check_Path = @"C:\VCS001\POT_image_test\test";
             string path = Camera_path;
             string args = $"OpenCameraDisplay.exe 3000 {Image_Check_Path}\\{pictureName}";
             string CompareValue = "OK";
             var Value = Send_args(path, args, CompareValue);
             if (Value.Contains("False")) return Value;
             string From_Path = $"{Image_Check_Path}\\{pictureName}";
-            string folder_path = $@"C:\VCS001\Image-Log\{DateTime.Now.ToString("yyyy-MM-dd hh-mm")}";
-            string To_Path = $"{folder_path}\\{pictureName}";
+            //string image_path = $@"{folder_path}\{DateTime.Now.ToString("yyyy-MM-dd hh-mm")}";
+            string To_Path = $"{ImageBackup_path}\\{pictureName}";
             try
             {
-                if (!Directory.Exists(folder_path)) Directory.CreateDirectory(folder_path);
+                if (!Directory.Exists(ImageBackup_path)) Directory.CreateDirectory(ImageBackup_path);
                 if (File.Exists(To_Path)) File.Delete(To_Path);
                 File.Copy(From_Path, To_Path);
                 Console.WriteLine("Capture and Save OK");
@@ -777,6 +831,7 @@ namespace VCS001
         }
         public string ProcessingImage(string AppName,string pictureName,string CompareValue)
         {
+            string Image_Check_Path = @"C:\VCS001\POT_image_test\test";
             string args = $@"{AppName} {Image_Check_Path}\{pictureName}";
             //string CompareValue = "Img_Center";
             var Value = Send_args(POT_Image_path, args, CompareValue);
@@ -785,7 +840,7 @@ namespace VCS001
         }
         public string GetImageCalculateResult_sfr(string Confirm_Value, string position_number)
         {
-            var imageValue = ThreadStr.Split('\n');
+            var imageValue = _UseforImgProcess.Split('\n');
             int num = int.Parse(position_number);
             try
             {
@@ -807,7 +862,7 @@ namespace VCS001
         }
         public string GetImageCalculateResult_Isc(string Confirm_Value, string line_number, string position_split)
         {
-            var imageValue = ThreadStr.Split('\n');
+            var imageValue = _UseforImgProcess.Split('\n');
             int num = int.Parse(line_number);
             int split_number = int.Parse(position_split);
             try
@@ -816,7 +871,8 @@ namespace VCS001
                 {
                     if (imageValue[i].Contains(Confirm_Value))
                     {
-                        var result = imageValue[i + num].Split(' ')[split_number].Trim();
+                        //var result1 = imageValue[i + num].Trim().Split(' ');
+                        var result = imageValue[i + num].Trim().Split(' ')[split_number].Trim();
                         return result;
                     }
                 }
@@ -829,6 +885,122 @@ namespace VCS001
             return false.ToString();
         }
         #endregion
+        #region Image Constant Area
+        public string OpenCameraConstant()
+        {
+            string args = $"ConstantPhotograph.exe";
+            string CompareValue = "OK";
+            var Value = Send_args(Camera_path, args, CompareValue);
+            if (Value.Contains("False")) return Value;
+            return true.ToString();
+
+        }
+        public string CloseCameraConstant()
+        {
+            string args = $"StopCamera";
+            string CompareValue = "";
+            var Value = Send_args_in_current_path(args, CompareValue);
+            if (Value.Contains("False")) return Value;
+            return true.ToString();
+        }
+        public string ConstantImage(string pictureName)
+        {
+            string args = $"Photograph 8000 {Image_Stitching_Path}\\{pictureName}";
+            string CompareValue = "OK, Take Photos";
+            var Value = Send_args_in_current_path(args, CompareValue);
+            if (Value.Contains("False")) return Value;
+            string From_Path = $"{Image_Stitching_Path}\\{pictureName}";
+            string To_Path = $"{ConstantPhotographBackup_path}\\{pictureName}";
+            try
+            {
+                if (!Directory.Exists(ConstantPhotographBackup_path)) Directory.CreateDirectory(ConstantPhotographBackup_path);
+                if (File.Exists(To_Path)) File.Delete(To_Path);
+                File.Copy(From_Path, To_Path);
+                Console.WriteLine("OK");
+                return true.ToString();
+            }
+            catch (IOException e)
+            {
+                //Console.WriteLine("Error: " + e.Message);
+                MessageBox.Show("Error: " + e.Message);
+            }
+            return false.ToString();
+        }
+        public string Read_Stitching_Defect_Test()
+        {
+            string args = $"m_stitching_DL_3line.exe \"{Image_Stitching_Path}/\"";
+            string CompareValue = $"stitching test pass";
+            var Value = Send_args(POT_Image_path, args, CompareValue);
+            if (Value.Contains("False")) return Value;
+            var array = _UseforImgProcess.Split('\n');
+            foreach (var result in array)
+            {
+                if (result.Contains(CompareValue))
+                {
+                    return result.Split('=', '%')[1].Trim();
+                }
+            }
+            return true.ToString();
+        }
+        public string Stitching_MaxSlope_ArucoDetec()
+        {
+            string args = $"m_stitching_aruco_det.exe \"{Image_Stitching_Path}/\"";
+            string CompareValue = "Merry stitching test2 Pass";
+            var Value = Send_args(POT_Image_path, args, CompareValue);
+            if (Value.Contains("False")) return Value;
+            return true.ToString();
+        }
+        #endregion
+
+        #region FinishedCameraTest 
+        public string Motoint_Init()
+        {
+            string path = @"CD C:\VCS001\uart";
+            string args = "motoint.exe.bat";
+            string CompareValue = "";
+            var Value = Send_args(path, args, CompareValue);
+            if (Value.Contains("False")) return Value;
+            return true.ToString();
+        }
+        public string Photo_Capture_Test()
+        {
+            string path = @"CD C:\VCS001\clair_capture";
+            
+            string args = $"clair_capture_vcs001_V2.exe -d=0 -path={Photograph_Path} -disp=1";
+            string CompareValue = "P45D.jpg";
+            var Value = Send_args(path, args, CompareValue);
+            if (Value.Contains("False")) return Value;
+            return true.ToString();
+        }
+        public string Read_SFR_Cam0_autoROI(string picture)
+        {
+            string path = @"CD C:\VCS001\merry_IQ_test";
+            string args = $@"m_sfr_autoROI.exe {Photograph_Path}\cam0_SFR.jpg";
+            string CompareValue = "mtf50_spec";
+            var Value = Send_args(path, args, CompareValue);
+            if (Value.Contains("False")) return Value;
+            return true.ToString();
+        }
+        public string Read_MCC_Cam0()
+        {
+            string path = @"CD C:\VCS001\merry_IQ_test";
+            string args = $@"m_MCC_check.exe {Photograph_Path}\cam0_mcc.jpg";
+            string CompareValue = "PASS";
+            var Value = Send_args(path, args, CompareValue);
+            if (Value.Contains("False")) return Value;
+            return true.ToString();
+        }
+        public string Read_LSC_Cam1()
+        {
+            string path = @"CD C:\VCS001\merry_IQ_test";
+            string args = $@"m_shading.exe {Photograph_Path}\cam1_LSC.jpg";
+            string CompareValue = "shading pass";
+            var Value = Send_args(path, args, CompareValue);
+            if (Value.Contains("False")) return Value;
+            return true.ToString();
+        }
+        #endregion
+
         #endregion
 
 

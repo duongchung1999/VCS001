@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandList.cs" />
+    <Compile Include="FinishedCameraTestStation.cs" />
     <Compile Include="ImageProcessing.cs" />
     <Compile Include="MotorControl.cs" />
     <Compile Include="TestItem\Data.cs" />
