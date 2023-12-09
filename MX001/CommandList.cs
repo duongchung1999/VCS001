@@ -90,8 +90,9 @@ namespace VCS001
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
-                return $"{ex.Message} False";
+                //MessageBox.Show(ex.ToString());
+                //return $"{ex.Message} False";
+                return false.ToString();
             }
         }
         private void readCMD()
@@ -488,16 +489,6 @@ namespace VCS001
             return fw;
         }
         #endregion
-        #region 功能Area
-        public string FOV360_image()
-        {
-            string args = "ast_usb_ctrl.exe s g \"ast_tcpclient fov_mode\"";
-            string CompareValue = "successfully";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
-            if (Value.Contains("False")) return Value;
-            return true.ToString();
-        }
-        #endregion
         #region Button Test Area
         public string ast1220_imageMode_pin()//按一下image button AST1220:
         {
@@ -660,7 +651,7 @@ namespace VCS001
             }
             catch (IOException e)
             {
-                //Console.WriteLine("Error: " + e.Message);
+                Console.WriteLine("Error: " + e.Message);
                 MessageBox.Show("Error: " + e.Message);
             }
             return false;
@@ -677,7 +668,14 @@ namespace VCS001
         #endregion
 
         #region 其他功能Area
-      
+        public string FOV360_image()
+        {
+            string args = "ast_usb_ctrl.exe s g \"ast_tcpclient fov_mode\"";
+            string CompareValue = "successfully";
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            if (Value.Contains("False")) return Value;
+            return true.ToString();
+        }
         public string Check_4_Mic()
         {
             string path = _4MIC_path;
@@ -687,6 +685,41 @@ namespace VCS001
             if (Value.Contains("False")) return Value;
             return true.ToString();
         }
+        public string Check_TOTEM_Mode()
+        {
+            string args = "ast_usb_ctrl.exe s g \"ipevo_cfg -g -c 1\"";
+            string CompareValue = "Mode";
+            
+            try
+            {
+                Func<bool> func = () =>
+                {
+                    while (true)
+                    {
+                        var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+                        var respond = _UseforImgProcess.Split('\n');
+                        foreach (var result in respond)
+                        {
+                            if (result.Contains(CompareValue))
+                            {
+                                Value = result;
+                                break;
+                            }
+                        }
+                        return Value == "Conferencing Mode";
+                    }
+                };
+                if (ProgressBars.CountDown(func, "Vui lòng nhấn nút Image để đổi qua chế độ Conferencing/请按下Image按键来切换Camera过Conferencing Mode", "Check Image Button"))
+                    return "Conferencing Mode";
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show(ex.ToString());
+                //return "False" + ex;
+            }
+            return false.ToString();
+        }
+        
         #endregion
         #region Change Camera Mode Area
         public string Cam0_Setup()
@@ -952,52 +985,95 @@ namespace VCS001
         }
         #endregion
 
-        #region FinishedCameraTest 
-        public string Motoint_Init()
+        #region DeviceName Area
+        public string Get_Device_Name()
         {
-            string path = @"CD C:\VCS001\uart";
-            string args = "motoint.exe.bat";
-            string CompareValue = "";
-            var Value = Send_args(path, args, CompareValue);
+            string args = "ast_usb_ctrl.exe s g \"ast_param mfg camera:uvc:MANUF\"";
+            string CompareValue = "IPEVO";
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
             if (Value.Contains("False")) return Value;
-            return true.ToString();
+            var respond = _UseforImgProcess.Split('\n');
+            foreach (var result in respond)
+            {
+                if (result.Contains(CompareValue)) return result;
+            }
+            return false.ToString();
         }
-        public string Photo_Capture_Test()
+        public string Get_TOTEM_360_Video_Name()
         {
-            string path = @"CD C:\VCS001\clair_capture";
-            
-            string args = $"clair_capture_vcs001_V2.exe -d=0 -path={Photograph_Path} -disp=1";
-            string CompareValue = "P45D.jpg";
-            var Value = Send_args(path, args, CompareValue);
+            string args = "ast_usb_ctrl.exe s g \"ast_param mfg camera:uvc:ICONFIG\"";
+            string CompareValue = "TOTEM 360 Video";
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
             if (Value.Contains("False")) return Value;
-            return true.ToString();
+            var respond = _UseforImgProcess.Split('\n');
+            foreach (var result in respond)
+            {
+                if (result.Contains(CompareValue)) return result;
+            }
+            return false.ToString();
         }
-        public string Read_SFR_Cam0_autoROI(string picture)
+        public string Check_Device_Name_TOTEM_360()
         {
-            string path = @"CD C:\VCS001\merry_IQ_test";
-            string args = $@"m_sfr_autoROI.exe {Photograph_Path}\cam0_SFR.jpg";
-            string CompareValue = "mtf50_spec";
-            var Value = Send_args(path, args, CompareValue);
+            string args = "ast_usb_ctrl.exe s g \"ast_param mfg camera:uvc:PRODUCT\"";
+            string CompareValue = "TOTEM 360";
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
             if (Value.Contains("False")) return Value;
-            return true.ToString();
+            var respond = _UseforImgProcess.Split('\n');
+            foreach (var result in respond)
+            {
+                if (result.Contains(CompareValue)) return result;
+            }
+            return false.ToString();
         }
-        public string Read_MCC_Cam0()
+        #endregion
+        #region PIDVID Area
+        public string Check_VIDPID()
         {
-            string path = @"CD C:\VCS001\merry_IQ_test";
-            string args = $@"m_MCC_check.exe {Photograph_Path}\cam0_mcc.jpg";
-            string CompareValue = "PASS";
-            var Value = Send_args(path, args, CompareValue);
+            string VID="";
+            string PID="";
+            string args = "ast_usb_ctrl.exe s g \"ast_param mfg camera:uvc:VID\"";
+            string CompareValue = "1778";
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
             if (Value.Contains("False")) return Value;
-            return true.ToString();
+            var respond = _UseforImgProcess.Split('\n');
+            foreach (var result in respond)
+            {
+                if (result.Contains(CompareValue)) VID = $"V{result}";
+            }
+            args = "ast_usb_ctrl.exe s g \"ast_param mfg camera:uvc:PID\"";
+            CompareValue = "C001";
+            Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            if (Value.Contains("False")) return Value;
+            respond = _UseforImgProcess.Split('\n');
+            foreach (var result in respond)
+            {
+                if (result.Contains(CompareValue)) PID = $"P{result}";
+            }
+            return $"{VID}_{PID}";
         }
-        public string Read_LSC_Cam1()
+        public string Check_VIDPID_Update()
         {
-            string path = @"CD C:\VCS001\merry_IQ_test";
-            string args = $@"m_shading.exe {Photograph_Path}\cam1_LSC.jpg";
-            string CompareValue = "shading pass";
-            var Value = Send_args(path, args, CompareValue);
+            string VID = "";
+            string PID = "";
+            string args = "ast_usb_ctrl.exe s g \"ast_param mfg camera:uvc:VID_UPDATE\"";
+            string CompareValue = "1778";
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
             if (Value.Contains("False")) return Value;
-            return true.ToString();
+            var respond = _UseforImgProcess.Split('\n');
+            foreach (var result in respond)
+            {
+                if (result.Contains(CompareValue)) VID = $"V{result}";
+            }
+            args = "ast_usb_ctrl.exe s g \"ast_param mfg camera:uvc:PID_UPDATE\"";
+            CompareValue = "C002";
+            Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            if (Value.Contains("False")) return Value;
+            respond = _UseforImgProcess.Split('\n');
+            foreach (var result in respond)
+            {
+                if (result.Contains(CompareValue)) PID = $"P{result}";
+            }
+            return $"{VID}_{PID}";
         }
         #endregion
 

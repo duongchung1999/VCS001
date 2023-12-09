@@ -15,7 +15,10 @@ namespace MerryTest.testitem
             ProgressBars box = new ProgressBars();
             box.Text = title;
             box.label1.Text = name;
-
+            if(name.Length >= 40)
+            {
+                box.label1.Font = new System.Drawing.Font("新宋体",24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            }
             Thread proThread = new Thread(() =>
             {
                 while (flag)
