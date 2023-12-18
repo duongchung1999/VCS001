@@ -22,10 +22,8 @@ namespace VCS001
         private string Camera_path = @"CD C:\VCS001\OpenCameraTest";
         private string ComputerZipFile = @"C:\VCS001\CalibrationDowload\CalibrationData.zip";
         private string Calibration_Path = @"\\10.175.5.25\data";
-        //private string Image_Check_Path = @"C:\VCS001\POT_image_test\test";
         private string Image_Stitching_Path = @"C:\VCS001\POT_image_test\123";
         private string POT_Image_path = @"CD C:\VCS001\POT_image_test";
-        private string Photograph_Path = @"C:\VCS001\PhotographPath";
 
         //private string folder_path = $@"C:\VCS001\Image-Log\{DateTime.Now.ToString("yyyy-MM-dd")}";
         string ImageBackup_path;
@@ -148,14 +146,14 @@ namespace VCS001
                 return false.ToString();
             }
         }
-        public string Send_args(string path, string args, string CompareValue)
+        public string Send_args(string path, string args, string CompareValue, int number)
         {
             string Resule;
             ThreadStr = "";
             _UseforImgProcess = "";
             Resule = CallCmd(path, true);
             if (Resule != "True") return path + "False";
-            Resule = CallCmd(args, false, CompareValue, 30);
+            Resule = CallCmd(args, false, CompareValue, number);
             if (Resule != "True") return args + "False";
             if (ThreadStr.Contains("Not found")) return $"False {ThreadStr}";
             return ThreadStr;
@@ -178,7 +176,7 @@ namespace VCS001
             string path = BurnPath;
             string args = "GD32_ISP_CLI.exe -c --pn {0} --br 57600 --db 8 --pr EVEN --sb 1 --to 5000 -p --dwp -e --all -d --a 8000000 --fn {1} --v";
             string CompareValue = "Successful";
-            var Value = Send_args(path, args, CompareValue);
+            var Value = Send_args(path, args, CompareValue,30);
             if (Value.Contains("False")) return Value;
             MessageBox.Show(Value);
             //var FW = Value.Split('"')[2].Split(' ')[0].Replace("total", "");
@@ -462,7 +460,7 @@ namespace VCS001
             string path = AstUsbTool_Path;
             string args = "ast_usb_ctrl.exe s g \"ast_param g version:merry_firmware:release_version\"";
             string CompareValue = "P1";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue, 5);
             if (Value.Contains("False")) return Value;
             var FW = Value.Split('"')[2].Split(' ')[0].Replace("total", "");
             return FW;
@@ -472,7 +470,7 @@ namespace VCS001
             //string path = AstUsbTool_Path;
             string args = "ast_usb_ctrl.exe s g \"ast_cli -u 4 | grep version\"";
             string CompareValue = "NV12";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             var FW = Value.Split('=')[1].Split(' ')[1].Replace("total", "");
             return FW;
@@ -483,10 +481,18 @@ namespace VCS001
             //string path = AstUsbTool_Path;
             string args = "ast_usb_ctrl.exe s g \"cat /tmp/mtk_fw_info\"";
             string CompareValue = "P1";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
-            if (Value.Contains("False")) return Value;
-            var fw = Value.Split('"')[2].Split(' ')[0].Replace("total", "");
-            return fw;
+            int i = 0;
+            string Value = "False";
+            while (i < 5)
+            {
+                i++;
+                Value = Send_args(AstUsbTool_Path, args, CompareValue, 5);
+                if (Value.Contains("False")) continue;
+                var fw = Value.Split('"')[2].Split(' ')[0].Replace("total", "");
+                return fw;
+            }
+            return Value;
+            
         }
         #endregion
         #region Button Test Area
@@ -501,7 +507,7 @@ namespace VCS001
                 {
                     while (true)
                     {
-                        var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+                        var Value = Send_args(AstUsbTool_Path, args, CompareValue,15);
                         var status = Value.Split('"')[2].Split(' ')[0].Replace("total", "");
                         return status == "1";
                     }
@@ -526,7 +532,7 @@ namespace VCS001
                 {
                     while (true)
                     {
-                        var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+                        var Value = Send_args(AstUsbTool_Path, args, CompareValue,15);
                         var status = Value.Split('"')[2].Split(' ')[0].Replace("total", "");
                         return status == "1";
                     }
@@ -550,11 +556,11 @@ namespace VCS001
                 int flag_number = int.Parse(flag);
                 string args = $"ast_usb_ctrl.exe s g \"ast_param mfs merry:factory_test {flag}\"";
                 string CompareValue = " ";
-                var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+                var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
                 if (Value.Contains("False")) return Value;
                 //保存
                 args = "ast_usb_ctrl.exe s g \"ast_param mfsave\"";
-                Value = Send_args(AstUsbTool_Path, args, CompareValue);
+                Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
                 if (Value.Contains("False")) return Value;
                 return true.ToString();
             }
@@ -569,7 +575,7 @@ namespace VCS001
         {
             string args = "ast_usb_ctrl.exe s g \"ast_param mfg merry:factory_test\"";
             string CompareValue = " ";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             var test_flag = Value.Split('"')[2].Split(' ')[0].Replace("total", "");
             return test_flag;
@@ -581,11 +587,11 @@ namespace VCS001
             if (SN.Contains("TE_BZP")) return true.ToString();
             string args = $"ast_usb_ctrl.exe s g \"ast_param mfs ipevo:TOTEM360:sn {SN}\"";
             string CompareValue = " ";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             args = $"ast_usb_ctrl.exe s g \"ast_param mfsave\"";
             CompareValue = "records";
-            Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             return true.ToString();
         }
@@ -593,7 +599,7 @@ namespace VCS001
         {
             string args = "ast_usb_ctrl.exe s g \"ast_param mfg ipevo:TOTEM360:sn\"";
             string CompareValue = " ";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             var sn = Value.Split('"')[2].Split(' ')[0].Replace("total", "");
             if (!sn.Contains(SN)&&!SN.Contains("TE_BZP")) return $"False {sn}";
@@ -609,7 +615,7 @@ namespace VCS001
             string args = $@"ast_usb_ctrl.exe s c C:\VCS001\CalibrationDowload";
             string CompareValue = "Updating calibration data";
             //string CompareValue = "invalid calibration data";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,30);
             if (Value.Contains("False")) return Value;
             return true.ToString();
         }
@@ -619,6 +625,11 @@ namespace VCS001
             string To_Path = ComputerZipFile;
             try
             {
+                if (!File.Exists(From_Path))
+                {
+                    MessageBox.Show($"Dowload Fail! This path not exits!\n{From_Path}");
+                    return false;
+                }
                 if (File.Exists(To_Path)) File.Delete(To_Path);
                 File.Copy(From_Path, To_Path);
                 Console.WriteLine("Dowload File OK");
@@ -659,11 +670,10 @@ namespace VCS001
         public string Reboot()
         {
             string args = $"ast_usb_ctrl.exe s g \"reboot\"";
-            string CompareValue = "Updating calibration data";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            string CompareValue = "";
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
-            var sn = Value.Split('"')[2].Split(' ')[0].Replace("total", "");
-            return sn;
+            return true.ToString();
         }
         #endregion
 
@@ -672,7 +682,7 @@ namespace VCS001
         {
             string args = "ast_usb_ctrl.exe s g \"ast_tcpclient fov_mode\"";
             string CompareValue = "successfully";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             return true.ToString();
         }
@@ -681,7 +691,7 @@ namespace VCS001
             string path = _4MIC_path;
             string args = "VCS001_2MIC_path_test.exe";
             string CompareValue = "PASS";
-            var Value = Send_args(path, args, CompareValue);
+            var Value = Send_args(path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             return true.ToString();
         }
@@ -696,7 +706,7 @@ namespace VCS001
                 {
                     while (true)
                     {
-                        var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+                        var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
                         var respond = _UseforImgProcess.Split('\n');
                         foreach (var result in respond)
                         {
@@ -726,7 +736,7 @@ namespace VCS001
         {
             string args = $"ast_usb_ctrl.exe s g \"echo \\\"1 0\\\" > /sys/kernel/ast_cam/dewarp_cfg\"";
             string CompareValue = "total cost";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             return true.ToString();
         }
@@ -734,7 +744,7 @@ namespace VCS001
         {
             string args = $"ast_usb_ctrl.exe s g \"echo \\\"1 1\\\" > /sys/kernel/ast_cam/dewarp_cfg\"";
             string CompareValue = "total cost";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             return true.ToString();
         }
@@ -742,7 +752,7 @@ namespace VCS001
         {
             string args = $"ast_usb_ctrl.exe s g \"echo \\\"1 2\\\" > /sys/kernel/ast_cam/dewarp_cfg\"";
             string CompareValue = "total cost";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             return true.ToString();
         }
@@ -750,7 +760,7 @@ namespace VCS001
         {
             string args = $"ast_usb_ctrl.exe s g \"echo \\\"1 3\\\" > /sys/kernel/ast_cam/dewarp_cfg\"";
             string CompareValue = "total cost";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             return true.ToString();
         }
@@ -758,7 +768,7 @@ namespace VCS001
         {
             string args = $"ast_usb_ctrl.exe s g \"echo \\\"0 0\\\" > /sys/kernel/ast_cam/dewarp_cfg\"";
             string CompareValue = "total cost";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             return true.ToString();
         }
@@ -768,10 +778,10 @@ namespace VCS001
         {
             string args = $"ast_usb_ctrl.exe s g \"mw 902000a8 9\"";
             string CompareValue = "total cost";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             args = $"ast_usb_ctrl.exe s g \"mw 90200020 8\"";
-            Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             return true.ToString();
         }
@@ -779,10 +789,10 @@ namespace VCS001
         {
             string args = $"ast_usb_ctrl.exe s g \"mw 902000a8 40\"";
             string CompareValue = "total cost";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             args = $"ast_usb_ctrl.exe s g \"mw 90200020 8\"";
-            Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             return true.ToString();
         }
@@ -790,10 +800,10 @@ namespace VCS001
         {
             string args = $"ast_usb_ctrl.exe s g \"mw 902000a8 50\"";
             string CompareValue = "total cost";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             args = $"ast_usb_ctrl.exe s g \"mw 90200020 8\"";
-            Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             return true.ToString();
         }
@@ -801,10 +811,10 @@ namespace VCS001
         {
             string args = $"ast_usb_ctrl.exe s g \"mw 902000a8 70\"";
             string CompareValue = "total cost";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             args = $"ast_usb_ctrl.exe s g \"mw 90200020 8\"";
-            Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             return true.ToString();
         }
@@ -815,7 +825,7 @@ namespace VCS001
             string path = Camera_path;
             string args = $"OpenCameraDisplay.exe {AddArgs}";
             string CompareValue = "OK";
-            var Value = Send_args(path, args, CompareValue);
+            var Value = Send_args(path, args, CompareValue,30);
             if (Value.Contains("False")) return Value;
             return true.ToString();
         }
@@ -842,7 +852,7 @@ namespace VCS001
             string path = Camera_path;
             string args = $"OpenCameraDisplay.exe 3000 {Image_Check_Path}\\{pictureName}";
             string CompareValue = "OK";
-            var Value = Send_args(path, args, CompareValue);
+            var Value = Send_args(path, args, CompareValue,20);
             if (Value.Contains("False")) return Value;
             string From_Path = $"{Image_Check_Path}\\{pictureName}";
             //string image_path = $@"{folder_path}\{DateTime.Now.ToString("yyyy-MM-dd hh-mm")}";
@@ -867,7 +877,7 @@ namespace VCS001
             string Image_Check_Path = @"C:\VCS001\POT_image_test\test";
             string args = $@"{AppName} {Image_Check_Path}\{pictureName}";
             //string CompareValue = "Img_Center";
-            var Value = Send_args(POT_Image_path, args, CompareValue);
+            var Value = Send_args(POT_Image_path, args, CompareValue,15);
             if (Value.Contains("False")) return Value;
             return true.ToString();
         }
@@ -923,7 +933,7 @@ namespace VCS001
         {
             string args = $"ConstantPhotograph.exe";
             string CompareValue = "OK";
-            var Value = Send_args(Camera_path, args, CompareValue);
+            var Value = Send_args(Camera_path, args, CompareValue,15);
             if (Value.Contains("False")) return Value;
             return true.ToString();
 
@@ -963,7 +973,7 @@ namespace VCS001
         {
             string args = $"m_stitching_DL_3line.exe \"{Image_Stitching_Path}/\"";
             string CompareValue = $"stitching test pass";
-            var Value = Send_args(POT_Image_path, args, CompareValue);
+            var Value = Send_args(POT_Image_path, args, CompareValue,10);
             if (Value.Contains("False")) return Value;
             var array = _UseforImgProcess.Split('\n');
             foreach (var result in array)
@@ -979,18 +989,43 @@ namespace VCS001
         {
             string args = $"m_stitching_aruco_det.exe \"{Image_Stitching_Path}/\"";
             string CompareValue = "Merry stitching test2 Pass";
-            var Value = Send_args(POT_Image_path, args, CompareValue);
+            var Value = Send_args(POT_Image_path, args, CompareValue,10);
             if (Value.Contains("False")) return Value;
             return true.ToString();
         }
         #endregion
 
         #region DeviceName Area
+        public string Write_Device_Name()
+        {
+            //Write Device Name
+            string args = "ast_usb_ctrl.exe s g \"ast_param mfs camera:uvc:MANUF IPEVO Inc.\"";
+            string CompareValue = "";
+            if (Config["SN"].ToString().Contains("TE_BZP")) return true.ToString();
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
+            if (Value.Contains("False")) return Value;
+            //Write Video Name
+            args = "ast_usb_ctrl.exe s g \"ast_param mfs camera:uvc:ICONFIG TOTEM 360 Video\"";
+            CompareValue = "";
+            Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
+            if (Value.Contains("False")) return Value;
+            //Write TOTEM 360
+            args = "ast_usb_ctrl.exe s g \"ast_param mfs camera:uvc:PRODUCT TOTEM 360\"";
+            CompareValue = "";
+            Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
+            if (Value.Contains("False")) return Value;
+            //Save
+            args = "ast_usb_ctrl.exe s g \"ast_param mfsave\"";
+            CompareValue = "";
+            Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
+            if (Value.Contains("False")) return Value;
+            return "IPEVO Inc.";
+        }
         public string Get_Device_Name()
         {
             string args = "ast_usb_ctrl.exe s g \"ast_param mfg camera:uvc:MANUF\"";
             string CompareValue = "IPEVO";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             var respond = _UseforImgProcess.Split('\n');
             foreach (var result in respond)
@@ -1003,7 +1038,7 @@ namespace VCS001
         {
             string args = "ast_usb_ctrl.exe s g \"ast_param mfg camera:uvc:ICONFIG\"";
             string CompareValue = "TOTEM 360 Video";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             var respond = _UseforImgProcess.Split('\n');
             foreach (var result in respond)
@@ -1016,7 +1051,7 @@ namespace VCS001
         {
             string args = "ast_usb_ctrl.exe s g \"ast_param mfg camera:uvc:PRODUCT\"";
             string CompareValue = "TOTEM 360";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             var respond = _UseforImgProcess.Split('\n');
             foreach (var result in respond)
@@ -1033,7 +1068,7 @@ namespace VCS001
             string PID="";
             string args = "ast_usb_ctrl.exe s g \"ast_param mfg camera:uvc:VID\"";
             string CompareValue = "1778";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             var respond = _UseforImgProcess.Split('\n');
             foreach (var result in respond)
@@ -1042,7 +1077,7 @@ namespace VCS001
             }
             args = "ast_usb_ctrl.exe s g \"ast_param mfg camera:uvc:PID\"";
             CompareValue = "C001";
-            Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             respond = _UseforImgProcess.Split('\n');
             foreach (var result in respond)
@@ -1057,7 +1092,7 @@ namespace VCS001
             string PID = "";
             string args = "ast_usb_ctrl.exe s g \"ast_param mfg camera:uvc:VID_UPDATE\"";
             string CompareValue = "1778";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             var respond = _UseforImgProcess.Split('\n');
             foreach (var result in respond)
@@ -1066,7 +1101,7 @@ namespace VCS001
             }
             args = "ast_usb_ctrl.exe s g \"ast_param mfg camera:uvc:PID_UPDATE\"";
             CompareValue = "C002";
-            Value = Send_args(AstUsbTool_Path, args, CompareValue);
+            Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
             respond = _UseforImgProcess.Split('\n');
             foreach (var result in respond)

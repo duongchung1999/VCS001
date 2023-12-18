@@ -17,15 +17,15 @@ namespace MerryDllFramework
         {
             string dllname = "DLL 名称       ：VCS001";
             string dllfunction = "Dll功能说明 ：VCS001";
-            string dllHistoryVersion = "历史Dll版本：0.0.0.1";
-            string dllVersion = "当前Dll版本：MP 23.12.07.0";
+            string dllHistoryVersion = "历史Dll版本：V23.12.09.0";
+            string dllVersion = "当前Dll版本：V23.12.14.0";
             string dllChangeInfo = "Dll改动信息：";
-            string dllChangeInfo3 = "MP 23.11.10.0： 2023/11/10 第一版开发程序";
+            string dllChangeInfo1 = "V23.12.14.0： 第一版开发程序";
             string[] info = { dllname,
                 dllfunction,
                 dllHistoryVersion,
                 dllVersion,
-                dllChangeInfo, dllChangeInfo3
+                dllChangeInfo, dllChangeInfo1
        };
             return info;
         }
@@ -59,6 +59,7 @@ namespace MerryDllFramework
                 case "Read_MCU_GD32F310_FW": return CommandList.Read_MCU_GD32F310_FW((string)Config["VCS001_ComPort"]);
                 case "Read_MCU_GD32F310_FW_TEST": return CommandList.Read_MCU_GD32F310_FW("COM16");
                 case "Read_MT9050_FW": return CommandList.Read_MT9050_FW();
+                case "Write_Device_Name": return CommandList.Write_Device_Name();
                 case "Get_Device_Name": return CommandList.Get_Device_Name();
                 case "Get_TOTEM_360_Video_Name": return CommandList.Get_TOTEM_360_Video_Name();
                 case "Check_Device_Name_TOTEM_360": return CommandList.Check_Device_Name_TOTEM_360();
@@ -75,14 +76,17 @@ namespace MerryDllFramework
                 case "Write_SN_Test": return CommandList.Write_SN("372317BAB00008");
                 case "Check_SN": return CommandList.Read_SN((string)Config["SN"]);
                 //Calibration
+                case "Reboot": return CommandList.Reboot();
                 case "Dowload_Calibration": return TE_BZP() ? true.ToString() : CommandList.Dowload_Calibration((string)Config["UID"]);
-                case "Dowload_Calibration_Test": return CommandList.Dowload_Calibration("0807234648");
+                case "Dowload_Calibration_Test": return CommandList.Dowload_Calibration("0317231445");
+                case "Dowload_Calibration_Test2": return CommandList.Dowload_Calibration(cmd[1]);
                 case "DowloadDataFile_Test": return CommandList.DowloadDataFile("0807234648").ToString();
                 case "UnzipFile_Test": return CommandList.UnzipFile().ToString();
                 case "FOV360_image": return CommandList.FOV360_image();
                 case "Check_4_Mic": return CommandList.Check_4_Mic();
 
 
+                #region Camera Check T2.3 Area
                 //Camera Check Picture Area
                 case "Get_Image_Log_Path": return CommandList.Get_Image_Log_Path();
                 case "OpenCamera": return CommandList.OpenCamera("");
@@ -168,17 +172,9 @@ namespace MerryDllFramework
                 case "PhotoGraph_P315D": return CommandList.ConstantImage("P315D.jpg");
                 case "PhotoGraph_P45D": return CommandList.ConstantImage("P45D.jpg");
                 case "PhotoGraph_P90D": return CommandList.ConstantImage("P90D.jpg");
-
-
-
-                //Change Camera Mode
-                case "Cam0_Setup": return CommandList.Cam0_Setup();
-                case "Cam1_Setup": return CommandList.Cam1_Setup();
-                case "Cam3_Setup": return CommandList.Cam3_Setup();
-                case "Cam4_Setup": return CommandList.Cam4_Setup();
-                case "Cam360_Setup": return CommandList.Cam360_Setup();
-
-                //曝光 AE target 調整
+                #endregion
+                #region Control Device T2.3
+                // 曝光 AE target 調整
                 case "AE_9": return CommandList.AE_9();
                 case "AE_40": return CommandList.AE_40();
                 case "AE_50": return CommandList.AE_50();
@@ -212,8 +208,15 @@ namespace MerryDllFramework
                 case "SFR_07_Led_Off": return motorControl.SFR_07_Led_Of();
                 case "Shading_Led_On": return motorControl.Shading_Led_On();
                 case "Shading_Led_Off": return motorControl.Shading_Led_Off();
-
-                //Finished Camera Test Station Area  
+                #endregion
+                #region Change Camera Mode
+                case "Cam0_Setup": return CommandList.Cam0_Setup();
+                case "Cam1_Setup": return CommandList.Cam1_Setup();
+                case "Cam3_Setup": return CommandList.Cam3_Setup();
+                case "Cam4_Setup": return CommandList.Cam4_Setup();
+                case "Cam360_Setup": return CommandList.Cam360_Setup();
+                #endregion
+                #region Finished Camera Test Station Area
                 case "S1_OutOff_T34": return finishedCameraTestStation.S1_OutOff((string)Config["VCS001_S1Port"]);//Cylinder Control
                 case "S1_OutOn_T34": return finishedCameraTestStation.S1_OutOn((string)Config["VCS001_S1Port"]);//Cylinder Control
                 case "S1_P0D_Set_T34": return finishedCameraTestStation.S1_P0D_Set((string)Config["VCS001_S1Port"]);//Cylinder Control
@@ -230,6 +233,7 @@ namespace MerryDllFramework
                 case "Photo_Capture_Test": return finishedCameraTestStation.Photo_Capture_Test();
                 case "Stitching_MaxSlope_and_ArucoDetec_T34": return finishedCameraTestStation.Stitching_MaxSlope_and_ArucoDetec();
                 case "Read_Stitching_Defect_Test_T34": return finishedCameraTestStation.Read_Stitching_Defect_Test();
+                case "Backup_Image_T34": return finishedCameraTestStation.Backup_Image();
                 //Cam0
                 case "Read_SFR_Cam0_T34": return finishedCameraTestStation.Read_SFR("cam0_SFR");
                 case "SFR_Cam0_MTF50": return finishedCameraTestStation.GetThreadStrResult("MTF50", 0);
@@ -254,7 +258,7 @@ namespace MerryDllFramework
                 case "SFR_Cam3_MTF30": return finishedCameraTestStation.GetThreadStrResult("MTF30", 0);
                 case "Read_MCC_Cam3": return finishedCameraTestStation.Read_MCC("cam3_mcc");
                 case "Read_LSC_Cam3": return finishedCameraTestStation.Read_LSC("cam3_LSC");
-
+                #endregion
                 #region SMT
                 case "Burn_FW": return TE_BZP() ? true.ToString() : CommandList.Burn_FW();
                 case "Read_MT9050_FW_SMT": return CommandList.Read_MT9050_FW_SMT((string)Config["VCS001_ComPort"]);

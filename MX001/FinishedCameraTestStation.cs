@@ -402,12 +402,16 @@ namespace VCS001
         {
             try
             {
-                DirectoryInfo directory = new DirectoryInfo(Photograph_Path);
-                foreach (FileInfo file in directory.GetFiles())
+                var ImageBackup_path = $@"D:\VCS001-Log\{DateTime.Now.ToString("yyyy-MM-dd")}\{Config["SN"]}_{DateTime.Now.ToString("hh-yy-mm")}";
+                if (!Directory.Exists(ImageBackup_path)) Directory.CreateDirectory(ImageBackup_path);
+                string[] files = Directory.GetFiles(Photograph_Path);
+                foreach(var file in files)
                 {
-                    file.Delete();
+                    string fileName = Path.GetFileName(file);
+                    string targetPath = Path.Combine(ImageBackup_path, fileName);
+                    File.Copy(file, targetPath, true);
                 }
-                Console.WriteLine($"Delete {Photograph_Path} OK");
+                Console.WriteLine($"Backup Image To {Photograph_Path} OK");
                 return true.ToString();
             }
             catch (IOException e)

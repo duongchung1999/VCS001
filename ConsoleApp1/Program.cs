@@ -23,7 +23,8 @@ namespace ConsoleApp1
             dll.StartRun();
             string[] command =
             {
-                "Check_TOTEM_Mode",
+                //"Write_Device_Name",
+                "Reboot",
 
             };
             foreach(string cmd in command)
