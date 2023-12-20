@@ -58,6 +58,7 @@ namespace MerryDllFramework
                 case "Read_KL520_FW": return CommandList.Read_KL520_FW();
                 case "Read_MCU_GD32F310_FW": return CommandList.Read_MCU_GD32F310_FW((string)Config["VCS001_ComPort"]);
                 case "Read_MCU_GD32F310_FW_TEST": return CommandList.Read_MCU_GD32F310_FW("COM16");
+                case "GetMCU_FWInSystem": return MCU_FW;
                 case "Read_MT9050_FW": return CommandList.Read_MT9050_FW();
                 case "Write_Device_Name": return CommandList.Write_Device_Name();
                 case "Get_Device_Name": return CommandList.Get_Device_Name();
@@ -285,7 +286,7 @@ namespace MerryDllFramework
                 default: return "Command Error False";
             }
         }
-
+        string MCU_FW = "False Can not get FW data in Test Systems";
         public bool Start(List<string> formsData, IntPtr _handel)
         {
             /*
@@ -299,6 +300,16 @@ namespace MerryDllFramework
             string OrderNumber = (string)Config["Works"];
             //根据料号索引的后台的参数
             Dictionary<string, string> PartNumberInfos = (Dictionary<string, string>)Config["PartNumberInfos"];
+            try
+            {
+                if(OrderNumber.Length >= 12)
+                MCU_FW = PartNumberInfos["MCU_FW"];
+            }
+            catch (Exception)
+            {
+                MessageBox.Show($"工单错误：{OrderNumber},该料号 {OrderNumberInformation} 在系统上未维护\nSai công đơn：{OrderNumber},Mã liệu {OrderNumberInformation} này chưa được đẩy lên lên hệ thống");
+                return false;
+            }
             CommandList.Config = Config;
             finishedCameraTestStation.Config = Config;
 
