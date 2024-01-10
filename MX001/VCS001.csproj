@@ -93,6 +93,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetDir)$(ProjectName).dll" "E:\2. MEVNSW\1_SourceCode\8_MerryApplication\MECH\MerryTest 2023.07.15\MerryTest\bin\Debug\TestItem\$(ProjectName)\$(ProjectName).dll"</PostBuildEvent>
+    <PostBuildEvent>copy "$(TargetDir)$(ProjectName).dll" "E:\2. MEVNSW\1_SourceCode\8_MerryApplication\MECH\MerryAppGithub\MerryTest\bin\Debug\TestItem\$(ProjectName)\$(ProjectName).dll"</PostBuildEvent>
   </PropertyGroup>
 </Project>

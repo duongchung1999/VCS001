@@ -24,7 +24,9 @@ namespace ConsoleApp1
             string[] command =
             {
                 //"Write_Device_Name",
-                "Reboot",
+                "Read_Test_Flag",
+                "Write_Test_Flag-1",
+                "Read_Test_Flag",
 
             };
             foreach(string cmd in command)

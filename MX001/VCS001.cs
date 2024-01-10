@@ -17,15 +17,17 @@ namespace MerryDllFramework
         {
             string dllname = "DLL 名称       ：VCS001";
             string dllfunction = "Dll功能说明 ：VCS001";
-            string dllHistoryVersion = "历史Dll版本：V23.12.09.0";
-            string dllVersion = "当前Dll版本：V23.12.14.0";
+            string dllHistoryVersion = "历史Dll版本：V24.1.8.0";
+            string dllVersion = "当前Dll版本：V24.1.10.0";
             string dllChangeInfo = "Dll改动信息：";
             string dllChangeInfo1 = "V23.12.14.0： 第一版开发程序";
+            string dllChangeInfo2 = "V24.1.8.0： SMT调试 Button Test";
+            string dllChangeInfo3 = "V24.1.9.0： SMT调试 WriteTestFlag";
             string[] info = { dllname,
                 dllfunction,
                 dllHistoryVersion,
                 dllVersion,
-                dllChangeInfo, dllChangeInfo1
+                dllChangeInfo, dllChangeInfo1, dllChangeInfo2,dllChangeInfo3
        };
             return info;
         }
@@ -71,14 +73,14 @@ namespace MerryDllFramework
                 case "ast1220_imageMode_pin": return CommandList.ast1220_imageMode_pin();
                 case "ast1220_GPIO1_pin": return CommandList.ast1220_GPIO1_pin();
                 //Flag and SN
-                case "Write_Test_Flag": return TE_BZP() ? true.ToString() : CommandList.Write_Test_Flag(cmd[1]);
+                case "Write_Test_Flag": return TE_BZP() ? "标准品" : CommandList.Write_Test_Flag(cmd[1]);
                 case "Read_Test_Flag": return CommandList.Read_Test_Flag();
-                case "Write_SN": return TE_BZP() ? true.ToString() : CommandList.Write_SN((string)Config["SN"]);
+                case "Write_SN": return TE_BZP() ? "标准品" : CommandList.Write_SN((string)Config["SN"]);
                 case "Write_SN_Test": return CommandList.Write_SN("372317BAB00008");
                 case "Check_SN": return CommandList.Read_SN((string)Config["SN"]);
                 //Calibration
                 case "Reboot": return CommandList.Reboot();
-                case "Dowload_Calibration": return TE_BZP() ? true.ToString() : CommandList.Dowload_Calibration((string)Config["UID"]);
+                case "Dowload_Calibration": return TE_BZP() ? "标准品" : CommandList.Dowload_Calibration((string)Config["UID"]);
                 case "Dowload_Calibration_Test": return CommandList.Dowload_Calibration("0317231445");
                 case "Dowload_Calibration_Test2": return CommandList.Dowload_Calibration(cmd[1]);
                 case "DowloadDataFile_Test": return CommandList.DowloadDataFile("0807234648").ToString();
@@ -300,16 +302,22 @@ namespace MerryDllFramework
             string OrderNumber = (string)Config["Works"];
             //根据料号索引的后台的参数
             Dictionary<string, string> PartNumberInfos = (Dictionary<string, string>)Config["PartNumberInfos"];
-            try
+            if ((int)Config["MesFlag"] >= 1)
             {
-                if(OrderNumber.Length >= 12)
-                MCU_FW = PartNumberInfos["MCU_FW"];
+                try
+                {
+                    if (OrderNumber.Length >= 12)
+                        MCU_FW = PartNumberInfos["MCU_FW"];
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show($"工单错误：{OrderNumber},该料号 {OrderNumberInformation} 在系统上未维护\nSai công đơn：{OrderNumber},Mã liệu {OrderNumberInformation} này chưa được đẩy lên lên hệ thống");
+                    return false;
+                }
             }
-            catch (Exception)
-            {
-                MessageBox.Show($"工单错误：{OrderNumber},该料号 {OrderNumberInformation} 在系统上未维护\nSai công đơn：{OrderNumber},Mã liệu {OrderNumberInformation} này chưa được đẩy lên lên hệ thống");
-                return false;
-            }
+            else MCU_FW = "False Test Program must use Mes Mode";
+
+
             CommandList.Config = Config;
             finishedCameraTestStation.Config = Config;
 

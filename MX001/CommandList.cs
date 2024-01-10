@@ -460,7 +460,7 @@ namespace VCS001
             string path = AstUsbTool_Path;
             string args = "ast_usb_ctrl.exe s g \"ast_param g version:merry_firmware:release_version\"";
             string CompareValue = "P1";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue, 5);
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue, 10);
             if (Value.Contains("False")) return Value;
             var FW = Value.Split('"')[2].Split(' ')[0].Replace("total", "");
             return FW;
@@ -470,7 +470,7 @@ namespace VCS001
             //string path = AstUsbTool_Path;
             string args = "ast_usb_ctrl.exe s g \"ast_cli -u 4 | grep version\"";
             string CompareValue = "NV12";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,10);
             if (Value.Contains("False")) return Value;
             var FW = Value.Split('=')[1].Split(' ')[1].Replace("total", "");
             return FW;
@@ -555,14 +555,17 @@ namespace VCS001
                 //写入
                 int flag_number = int.Parse(flag);
                 string args = $"ast_usb_ctrl.exe s g \"ast_param mfs merry:factory_test {flag}\"";
-                string CompareValue = " ";
+                string CompareValue = "total cost";
                 var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
                 if (Value.Contains("False")) return Value;
                 //保存
                 args = "ast_usb_ctrl.exe s g \"ast_param mfsave\"";
+                CompareValue = "records in";
                 Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
                 if (Value.Contains("False")) return Value;
-                return true.ToString();
+                var flagRespond = Read_Test_Flag();
+                return flagRespond == flag?flag:$"Flase: {flagRespond}";
+                //return true.ToString();
             }
             catch (Exception ex)
             {
@@ -574,8 +577,8 @@ namespace VCS001
         public string Read_Test_Flag()
         {
             string args = "ast_usb_ctrl.exe s g \"ast_param mfg merry:factory_test\"";
-            string CompareValue = " ";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
+            string CompareValue = "total cost";
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,10);
             if (Value.Contains("False")) return Value;
             var test_flag = Value.Split('"')[2].Split(' ')[0].Replace("total", "");
             return test_flag;
@@ -593,7 +596,8 @@ namespace VCS001
             CompareValue = "records";
             Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
             if (Value.Contains("False")) return Value;
-            return true.ToString();
+            return Read_SN(SN);
+            //return true.ToString();
         }
         public string Read_SN(string SN)
         {
@@ -617,7 +621,8 @@ namespace VCS001
             //string CompareValue = "invalid calibration data";
             var Value = Send_args(AstUsbTool_Path, args, CompareValue,30);
             if (Value.Contains("False")) return Value;
-            return true.ToString();
+            return CompareValue;
+            //return true.ToString();
         }
         public bool DowloadDataFile(string CameraSN)
         {
