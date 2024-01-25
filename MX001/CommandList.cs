@@ -1001,30 +1001,30 @@ namespace VCS001
         #endregion
 
         #region DeviceName Area
-        public string Write_Device_Name()
+        public string Write_Device_Name(string DeviceName)
         {
             //Write Device Name
-            string args = "ast_usb_ctrl.exe s g \"ast_param mfs camera:uvc:MANUF IPEVO Inc.\"";
+            string args = $"ast_usb_ctrl.exe s g \"ast_param mfs camera:uvc:MANUF {DeviceName}\"";
             string CompareValue = "";
             if (Config["SN"].ToString().Contains("TE_BZP")) return true.ToString();
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,10);
             if (Value.Contains("False")) return Value;
             //Write Video Name
             args = "ast_usb_ctrl.exe s g \"ast_param mfs camera:uvc:ICONFIG TOTEM 360 Video\"";
             CompareValue = "";
-            Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
+            Value = Send_args(AstUsbTool_Path, args, CompareValue,10);
             if (Value.Contains("False")) return Value;
             //Write TOTEM 360
             args = "ast_usb_ctrl.exe s g \"ast_param mfs camera:uvc:PRODUCT TOTEM 360\"";
             CompareValue = "";
-            Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
+            Value = Send_args(AstUsbTool_Path, args, CompareValue,10);
             if (Value.Contains("False")) return Value;
             //Save
             args = "ast_usb_ctrl.exe s g \"ast_param mfsave\"";
             CompareValue = "";
-            Value = Send_args(AstUsbTool_Path, args, CompareValue,5);
+            Value = Send_args(AstUsbTool_Path, args, CompareValue,10);
             if (Value.Contains("False")) return Value;
-            return "IPEVO Inc.";
+            return DeviceName;
         }
         public string Get_Device_Name()
         {

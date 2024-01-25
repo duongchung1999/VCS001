@@ -135,6 +135,35 @@ namespace VCS001
                 return false;
             }
         }
+        private bool OpenPort_2(string Com_Name, int Baurate)
+        {
+            port1 = new SerialPort();
+
+            port1.PortName = Com_Name;
+            port1.BaudRate = Baurate;
+            port1.DataBits = 8;
+            port1.StopBits = StopBits.One;
+            port1.Parity = Parity.Even;
+            try
+            {
+                if (!port1.IsOpen)
+                {
+                    port1.Open();
+                }
+                else
+                {
+                    port1.Close();
+                    Thread.Sleep(100);
+                    port1.Open();
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return false;
+            }
+        }
         private string ClosePort()
         {
             try
@@ -201,6 +230,30 @@ namespace VCS001
         #endregion
         #region Cylinder Area
         private string PortSend(string Com_name, int Baurate, string cmd)
+        {
+            //string cmd = "outoff 0001";
+            try
+            {
+                //var Baurate = int.Parse(baurate);
+                if (!OpenPort(Com_name, Baurate)) return false.ToString();
+                cmd += "\r\n";
+                port1.Write(cmd);
+                return true.ToString();
+            }
+            catch (IOException e)
+            {
+                MessageBox.Show(e.Message);
+                return false.ToString();
+            }
+            finally
+            {
+                if (port1.IsOpen) port1.Close();
+                port1.Dispose();
+                Thread.Sleep(50);
+            }
+
+        }
+        private string PortSend_2(string Com_name, int Baurate, string cmd)
         {
             //string cmd = "outoff 0001";
             try

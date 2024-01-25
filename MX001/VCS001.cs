@@ -18,7 +18,7 @@ namespace MerryDllFramework
             string dllname = "DLL 名称       ：VCS001";
             string dllfunction = "Dll功能说明 ：VCS001";
             string dllHistoryVersion = "历史Dll版本：V24.1.8.0";
-            string dllVersion = "当前Dll版本：V24.1.10.0";
+            string dllVersion = "当前Dll版本：V24.1.25.0";
             string dllChangeInfo = "Dll改动信息：";
             string dllChangeInfo1 = "V23.12.14.0： 第一版开发程序";
             string dllChangeInfo2 = "V24.1.8.0： SMT调试 Button Test";
@@ -62,7 +62,7 @@ namespace MerryDllFramework
                 case "Read_MCU_GD32F310_FW_TEST": return CommandList.Read_MCU_GD32F310_FW("COM16");
                 case "GetMCU_FWInSystem": return MCU_FW;
                 case "Read_MT9050_FW": return CommandList.Read_MT9050_FW();
-                case "Write_Device_Name": return CommandList.Write_Device_Name();
+                case "Write_Device_Name": return CommandList.Write_Device_Name(cmd[1]);
                 case "Get_Device_Name": return CommandList.Get_Device_Name();
                 case "Get_TOTEM_360_Video_Name": return CommandList.Get_TOTEM_360_Video_Name();
                 case "Check_Device_Name_TOTEM_360": return CommandList.Check_Device_Name_TOTEM_360();
@@ -73,7 +73,7 @@ namespace MerryDllFramework
                 case "ast1220_imageMode_pin": return CommandList.ast1220_imageMode_pin();
                 case "ast1220_GPIO1_pin": return CommandList.ast1220_GPIO1_pin();
                 //Flag and SN
-                case "Write_Test_Flag": return TE_BZP() ? "标准品" : CommandList.Write_Test_Flag(cmd[1]);
+                case "Write_Test_Flag": return CommandList.Write_Test_Flag(cmd[1]);
                 case "Read_Test_Flag": return CommandList.Read_Test_Flag();
                 case "Write_SN": return TE_BZP() ? "标准品" : CommandList.Write_SN((string)Config["SN"]);
                 case "Write_SN_Test": return CommandList.Write_SN("372317BAB00008");
