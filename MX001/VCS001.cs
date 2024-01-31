@@ -80,7 +80,7 @@ namespace MerryDllFramework
                 case "Check_SN": return CommandList.Read_SN((string)Config["SN"]);
                 //Calibration
                 case "Reboot": return CommandList.Reboot();
-                case "Dowload_Calibration": return TE_BZP() ? "标准品" : CommandList.Dowload_Calibration((string)Config["UID"]);
+                case "Dowload_Calibration": return TE_BZP() ? "标准品" : CommandList.Dowload_Calibration(Config["UID"].ToString());
                 case "Dowload_Calibration_Test": return CommandList.Dowload_Calibration("0317231445");
                 case "Dowload_Calibration_Test2": return CommandList.Dowload_Calibration(cmd[1]);
                 case "DowloadDataFile_Test": return CommandList.DowloadDataFile("0807234648").ToString();

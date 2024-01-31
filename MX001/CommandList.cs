@@ -619,7 +619,7 @@ namespace VCS001
             string args = $@"ast_usb_ctrl.exe s c C:\VCS001\CalibrationDowload";
             string CompareValue = "Updating calibration data";
             //string CompareValue = "invalid calibration data";
-            var Value = Send_args(AstUsbTool_Path, args, CompareValue,30);
+            var Value = Send_args(AstUsbTool_Path, args, CompareValue,60);
             if (Value.Contains("False")) return Value;
             return CompareValue;
             //return true.ToString();
@@ -627,6 +627,7 @@ namespace VCS001
         public bool DowloadDataFile(string CameraSN)
         {
             string From_Path = $@"{Calibration_Path}\003025-{CameraSN}.zip";
+            //MessageBox.Show(From_Path);
             string To_Path = ComputerZipFile;
             try
             {
@@ -657,6 +658,7 @@ namespace VCS001
                 DirectoryInfo directory = new DirectoryInfo(extractPath);
                 foreach (FileInfo file in directory.GetFiles())
                 {
+                    if (file.Name.Contains("AST")) continue;
                     file.Delete();
                 }
                 Console.WriteLine($"Delete {extractPath} OK");
@@ -889,7 +891,7 @@ namespace VCS001
         public string GetImageCalculateResult_sfr(string Confirm_Value, string position_number)
         {
             var imageValue = _UseforImgProcess.Split('\n');
-            int num = int.Parse(position_number);
+            int num = int.Parse(position_number);   
             try
             {
                 for (int i = 0; i < imageValue.Length; i++)
