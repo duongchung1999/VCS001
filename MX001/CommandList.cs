@@ -976,6 +976,29 @@ namespace VCS001
             }
             return false.ToString();
         }
+        public string ConstantImage(string pictureName, string DelayTime)
+        {
+            string args = $"Photograph {DelayTime} {Image_Stitching_Path}\\{pictureName}";
+            string CompareValue = "OK, Take Photos";
+            var Value = Send_args_in_current_path(args, CompareValue);
+            if (Value.Contains("False")) return Value;
+            string From_Path = $"{Image_Stitching_Path}\\{pictureName}";
+            string To_Path = $"{ConstantPhotographBackup_path}\\{pictureName}";
+            try
+            {
+                if (!Directory.Exists(ConstantPhotographBackup_path)) Directory.CreateDirectory(ConstantPhotographBackup_path);
+                if (File.Exists(To_Path)) File.Delete(To_Path);
+                File.Copy(From_Path, To_Path);
+                Console.WriteLine("OK");
+                return true.ToString();
+            }
+            catch (IOException e)
+            {
+                //Console.WriteLine("Error: " + e.Message);
+                MessageBox.Show("Error: " + e.Message);
+            }
+            return false.ToString();
+        }
         public string Read_Stitching_Defect_Test()
         {
             string args = $"m_stitching_DL_3line.exe \"{Image_Stitching_Path}/\"";

@@ -174,7 +174,15 @@ namespace MerryDllFramework
                 case "PhotoGraph_P270D": return CommandList.ConstantImage("P270D.jpg");
                 case "PhotoGraph_P315D": return CommandList.ConstantImage("P315D.jpg");
                 case "PhotoGraph_P45D": return CommandList.ConstantImage("P45D.jpg");
-                case "PhotoGraph_P90D": return CommandList.ConstantImage("P90D.jpg");
+                case "PhotoGraph_P90D": return CommandList.ConstantImage("P90D.jpg");   
+                    ////
+                case "PhotoGraph_P135D_setDelay": return CommandList.ConstantImage("P135D.jpg", cmd[1]);
+                case "PhotoGraph_P180D_setDelay": return CommandList.ConstantImage("P180D.jpg", cmd[1]);
+                case "PhotoGraph_P225D_setDelay": return CommandList.ConstantImage("P225D.jpg", cmd[1]);
+                case "PhotoGraph_P270D_setDelay": return CommandList.ConstantImage("P270D.jpg", cmd[1]);
+                case "PhotoGraph_P315D_setDelay": return CommandList.ConstantImage("P315D.jpg", cmd[1]);
+                case "PhotoGraph_P45D_setDelay": return CommandList.ConstantImage("P45D.jpg", cmd[1]);
+                case "PhotoGraph_P90D_setDelay": return CommandList.ConstantImage("P90D.jpg", cmd[1]);
                 #endregion
                 #region Control Device T2.3
                 // 曝光 AE target 調整
@@ -237,6 +245,8 @@ namespace MerryDllFramework
                 case "Stitching_MaxSlope_and_ArucoDetec_T34": return finishedCameraTestStation.Stitching_MaxSlope_and_ArucoDetec();
                 case "Read_Stitching_Defect_Test_T34": return finishedCameraTestStation.Read_Stitching_Defect_Test();
                 case "Backup_Image_T34": return finishedCameraTestStation.Backup_Image();
+                case "Delete_OldImage": return finishedCameraTestStation.Delete_OldImage();
+
                 //Cam0
                 case "Read_SFR_Cam0_T34": return finishedCameraTestStation.Read_SFR("cam0_SFR");
                 case "SFR_Cam0_MTF50": return finishedCameraTestStation.GetThreadStrResult("MTF50", 0);

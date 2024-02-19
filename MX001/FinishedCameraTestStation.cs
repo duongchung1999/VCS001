@@ -463,8 +463,29 @@ namespace VCS001
                     string fileName = Path.GetFileName(file);
                     string targetPath = Path.Combine(ImageBackup_path, fileName);
                     File.Copy(file, targetPath, true);
+                    //File.Delete(file);
                 }
                 Console.WriteLine($"Backup Image To {Photograph_Path} OK");
+                return true.ToString();
+            }
+            catch (IOException e)
+            {
+                //Console.WriteLine("Error: " + e.Message);
+                MessageBox.Show("Error: " + e.Message);
+            }
+            return false.ToString();
+        }
+        public string Delete_OldImage()
+        {
+            try
+            {
+               
+                string[] files = Directory.GetFiles(Photograph_Path);
+                foreach (var file in files)
+                {
+                    
+                    File.Delete(file);
+                }
                 return true.ToString();
             }
             catch (IOException e)
